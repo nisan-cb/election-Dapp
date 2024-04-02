@@ -26,6 +26,7 @@ contract Election {
         owner = ownerAddress;
         startTime = block.timestamp + 300;
         endTime = block.timestamp + 3600;
+        addCandidate("avi");
     }
     modifier onlyOwner() {
         require(msg.sender == owner);
