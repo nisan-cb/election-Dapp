@@ -1,0 +1,28 @@
+#candidatesTable {
+    margin: 2vh 0;
+    padding: 0 0 1vh 0;
+    border-bottom: 1px solid #c5c5c525;
+}
+
+.tr {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.td {
+    flex: 1;
+}
+
+#select-wrapper {
+    display: flex;
+    font-size: 1rem;
+    gap: 1vw;
+}
+
+select {
+    width: 100%;
+    font-size: 1rem;
+}
