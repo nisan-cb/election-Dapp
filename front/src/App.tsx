@@ -8,9 +8,6 @@ import { AppContext } from './context';
 
 function App() {
   const { isOwner, currentAccount, connectAccountHandler } = useContext(AppContext);
-  console.log(isOwner)
-
-
 
   return (
     <>

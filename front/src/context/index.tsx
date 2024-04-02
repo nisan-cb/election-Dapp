@@ -74,13 +74,11 @@ const ContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
     }
 
     const connectAccountHandler = async () => {
-        console.log('ss')
         try {
             if (!window.ethereum)
                 alert("Please install MetaMask")
             const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
             setCurrentAccount(accounts[0])
-            console.log(accounts)
         } catch (error) {
             console.log(error);
         }
@@ -89,7 +87,6 @@ const ContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
     const initContract = async () => {
         try {
             const electionContractInstance = new window.web3.eth.Contract(ElectionContractArtifact.abi, ElectionContractArtifact.networks[5777].address)
-            console.log(electionContractInstance)
             setElectionContractInstance(electionContractInstance)
 
         } catch (error) {
@@ -103,7 +100,6 @@ const ContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
 
         const res: boolean = await electionContract.methods.isOwner().call({ from: currentAccount });
 
-        console.log({ res })
         setIsOwner(res);
     }
 
@@ -113,7 +109,6 @@ const ContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
         const array: ICandidate[] = [];
         for (let i = 1; i <= candidatesCount; i++) {
             const candidate: any = await electionContract?.methods.candidates(i).call();
-            console.log(candidate)
             array.push({
                 id: Number(candidate[0]),
                 name: candidate[1],
@@ -121,16 +116,12 @@ const ContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
             })
 
         }
-        console.log(array)
         setCandidates(array);
     }
 
     const checkIsCurrentUserHasVoted = async () => {
-        console.log('here', currentAccount)
         if (!electionContract || !currentAccount) return;
-        console.log("22222222")
         const res: boolean = await electionContract?.methods.voters(currentAccount).call();
-        console.log('is voted', res);
         setIsCurrentUserHasVoted(res);
     }
 
