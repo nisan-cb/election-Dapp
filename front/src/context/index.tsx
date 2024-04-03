@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Web3, { Contract } from 'web3';
 import ElectionContractArtifact from '../../../truffle/build/contracts/Election.json';
+import { subscribeEvent } from '../services/web3';
 
 export interface ICandidate {
     id: number;
@@ -40,8 +41,17 @@ const ContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
     }, [currentAccount])
 
     useEffect(() => {
+        if (!electionContract) return;
+        subscribeEvents()
         getCandidates();
     }, [electionContract])
+
+    const subscribeEvents = async () => {
+        if (!electionContract) return
+        subscribeEvent(electionContract, 'NewCandidate', () => getCandidates())
+        subscribeEvent(electionContract, 'Reset', () => initContract())
+    }
+
 
     useEffect(() => {
         checkIsCurrentUserHasVoted();
