@@ -20,15 +20,14 @@ import { Contract, ContractAbi } from "web3";
 export const subscribeEvent = async (contract: Contract<ContractAbi>, eventName: string, cb?: (event: any) => void) => {
     try {
         if (!contract) return
-        const eventInstance = contract?.events[eventName]({ fromBlock: 0 });
-
+        const eventInstance = contract?.events[eventName]({});
         eventInstance?.on('data', (event: any) => {
             cb?.(event)
         });
 
         eventInstance?.on('error', console.error);
     } catch (error) {
-
+        console.log(error)
     }
 
 }
