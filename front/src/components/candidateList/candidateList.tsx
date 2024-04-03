@@ -22,7 +22,7 @@ const CandidateList = () => {
     }
 
     const displaySelection = () => {
-        return candidates.map(({ name, id }) => <option key={id} value={id} className="tr">{name}</option>)
+        return candidates.map(({ name, id }) => <option key={`option-${id}`} value={id} className="tr">{name}</option>)
     }
 
     const voteHandler = async () => {
@@ -53,7 +53,9 @@ const CandidateList = () => {
                     <p>Already voted</p>
                     :
                     <div id="select-wrapper">
-                        <select value={selectedCandidate} onChange={e => setSelectedCandidate(Number(e.target.value))}>
+                        <select value={selectedCandidate} onChange={e => {
+                            setSelectedCandidate(Number(e.target.value))
+                        }}>
                             {displaySelection()}
                         </select>
                         <button onClick={voteHandler}>Vote</button>

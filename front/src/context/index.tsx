@@ -50,6 +50,7 @@ const ContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
         if (!electionContract) return
         subscribeEvent(electionContract, 'NewCandidate', () => getCandidates())
         subscribeEvent(electionContract, 'Reset', () => initContract())
+        subscribeEvent(electionContract, 'NewVote', () => getCandidates())
     }
 
 
@@ -114,6 +115,7 @@ const ContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
     }
 
     const getCandidates = async () => {
+        console.log('ss')
         if (!electionContract) return;
         const candidatesCount: number = await electionContract?.methods.candidatesCount().call();
         const array: ICandidate[] = [];
