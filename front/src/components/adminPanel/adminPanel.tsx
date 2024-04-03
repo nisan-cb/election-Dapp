@@ -11,8 +11,13 @@ const AdminPanel = () => {
 
         const res = await electionContract.methods.addCandidate(newCandidateName).send({ from: currentAccount });
         setNewCandidateName('');
-        console.log(res)
 
+    }
+
+    const restartHandler = async () => {
+        if (!electionContract) return
+
+        const res = await electionContract.methods.reset().send({ from: currentAccount });
     }
 
     return (
@@ -21,6 +26,7 @@ const AdminPanel = () => {
 
             <input type="text" placeholder="Candidate name" value={newCandidateName} onChange={e => setNewCandidateName(e.target.value)} />
             <button onClick={addCandidateHandler}>Add</button>
+            <button onClick={restartHandler}>Restart</button>
         </>
 
 
