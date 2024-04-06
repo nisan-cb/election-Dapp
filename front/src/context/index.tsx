@@ -15,7 +15,9 @@ const initialContext = {
     isOwner: false as boolean,
     connectAccountHandler: () => { },
     electionContract: undefined as Contract<typeof ElectionContractArtifact.abi> | undefined,
-    isCurrentUserHasVoted: false
+    isCurrentUserHasVoted: false,
+    startTimeInMs: 0,
+    endTimeInMs: 0,
 }
 
 type AppContextType = typeof initialContext
@@ -29,6 +31,8 @@ const ContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
     const [isOwner, setIsOwner] = useState(false);
     const [candidates, setCandidates] = useState<ICandidate[]>([]);
     const [isCurrentUserHasVoted, setIsCurrentUserHasVoted] = useState(false);
+    const [startTimeInMs, setStartTime] = useState<number>(0);
+    const [endTimeInMs, setEndTime] = useState<number>(0);
 
     useEffect(() => {
         initWeb3Provider();
@@ -44,6 +48,7 @@ const ContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
         if (!electionContract) return;
         subscribeEvents()
         getCandidates();
+        getTime();
     }, [electionContract])
 
     const subscribeEvents = async () => {
@@ -58,6 +63,8 @@ const ContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
         checkIsCurrentUserHasVoted();
 
     }, [currentAccount, electionContract])
+
+
 
     const initWeb3Provider = () => {
         if (typeof window.ethereum !== 'undefined') {
@@ -115,7 +122,6 @@ const ContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
     }
 
     const getCandidates = async () => {
-        console.log('ss')
         if (!electionContract) return;
         const candidatesCount: number = await electionContract?.methods.candidatesCount().call();
         const array: ICandidate[] = [];
@@ -131,6 +137,17 @@ const ContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
         setCandidates(array);
     }
 
+    const getTime = async () => {
+        if (!electionContract) return;
+        const startTime: number = await electionContract.methods.startTime().call();
+        const endTime: number = await electionContract.methods.endTime().call();
+
+        console.log(Number(startTime) * 1000)
+        setStartTime(Number(startTime) * 1000);
+        setEndTime((Number(endTime) * 1000))
+
+    }
+
     const checkIsCurrentUserHasVoted = async () => {
         if (!electionContract || !currentAccount) return;
         const res: boolean = await electionContract?.methods.voters(currentAccount).call();
@@ -139,7 +156,10 @@ const ContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
 
 
     return (
-        <AppContext.Provider value={{ isOwner, currentAccount, candidates, connectAccountHandler, electionContract, isCurrentUserHasVoted }}>
+        <AppContext.Provider value={{
+            isOwner, currentAccount, candidates, connectAccountHandler, electionContract, isCurrentUserHasVoted,
+            startTimeInMs, endTimeInMs
+        }}>
             {children}
         </AppContext.Provider>
     )
