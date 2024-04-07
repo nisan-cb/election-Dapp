@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "./VotingToken.sol";
+
 // Model a Candidate
 struct Candidate {
     uint id;
@@ -13,6 +15,7 @@ contract Election {
     event NewCandidate();
     event NewVote();
 
+    VotingToken public token;
     address private owner; // Contract owner
     mapping(address => bool) public voters; // Store accounts that have voted
     mapping(uint => Candidate) public candidates; // Read/write candidates
@@ -22,8 +25,9 @@ contract Election {
     uint256 public endTime; //elections end time
 
     // Constructor
-    constructor(address ownerAddress) {
-        owner = ownerAddress;
+    constructor(address tokenAddress) {
+        owner = msg.sender;
+        token = VotingToken(tokenAddress);
         startTime = block.timestamp + 300;
         endTime = block.timestamp + 3600;
         addCandidate("avi");
@@ -60,6 +64,9 @@ contract Election {
 
         // require a valid candidate
         require(_candidateId > 0 && _candidateId <= candidatesCount);
+
+        // Mint tokens to the voter
+        token.mint(msg.sender, 1);
 
         // record that voter has voted
         voters[msg.sender] = true;
