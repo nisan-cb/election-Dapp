@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Web3, { Contract } from 'web3';
 import ElectionContractArtifact from '../../../truffle/build/contracts/Election.json';
 import { subscribeEvent } from '../services/web3';
@@ -7,6 +7,11 @@ export interface ICandidate {
     id: number;
     name: string;
     voteCount: number;
+    ideology: {
+        economy: number;
+        education: number;
+        security: number;
+    }
 }
 
 const initialContext = {
@@ -18,6 +23,9 @@ const initialContext = {
     isCurrentUserHasVoted: false,
     startTimeInMs: 0,
     endTimeInMs: 0,
+    isOpen: false,
+    timeToStart: 0,
+    timeToEnd: 0
 }
 
 type AppContextType = typeof initialContext
@@ -33,6 +41,10 @@ const ContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
     const [isCurrentUserHasVoted, setIsCurrentUserHasVoted] = useState(false);
     const [startTimeInMs, setStartTime] = useState<number>(0);
     const [endTimeInMs, setEndTime] = useState<number>(0);
+    const [isOpen, setIsOpen] = useState<boolean>(false);
+    const [timeToStart, setTimeToStart] = useState(0);
+    const [timeToEnd, setTimeToEnd] = useState(0);
+    const timerIDref = useRef<NodeJS.Timeout | undefined>(undefined)
 
     useEffect(() => {
         initWeb3Provider();
@@ -50,6 +62,24 @@ const ContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
         getCandidates();
         getTime();
     }, [electionContract])
+
+    useEffect(() => {
+        clearInterval(timerIDref.current)
+        setTimeToStart(startTimeInMs - Date.now());
+        setTimeToEnd(endTimeInMs - Date.now());
+
+        timerIDref.current = setInterval(() => {
+            setTimeToStart(prev => prev - 1000)
+            setTimeToEnd(prev => prev - 1000)
+        }, 1000);
+        return () => {
+            clearInterval(timerIDref.current)
+        }
+    }, [startTimeInMs, endTimeInMs]);
+
+    useEffect(() => {
+        setIsOpen(timeToStart <= 0 && timeToEnd > 0)
+    }, [timeToStart, timeToEnd])
 
     const subscribeEvents = async () => {
         if (!electionContract) return
@@ -130,7 +160,12 @@ const ContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
             array.push({
                 id: Number(candidate[0]),
                 name: candidate[1],
-                voteCount: Number(candidate[2])
+                voteCount: Number(candidate[2]),
+                ideology: {
+                    economy: Number(candidate[3][0]),
+                    education: Number(candidate[3][1]),
+                    security: Number(candidate[3][2])
+                }
             })
 
         }
@@ -142,7 +177,6 @@ const ContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
         const startTime: number = await electionContract.methods.startTime().call();
         const endTime: number = await electionContract.methods.endTime().call();
 
-        console.log(Number(startTime) * 1000)
         setStartTime(Number(startTime) * 1000);
         setEndTime((Number(endTime) * 1000))
 
@@ -158,7 +192,7 @@ const ContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
     return (
         <AppContext.Provider value={{
             isOwner, currentAccount, candidates, connectAccountHandler, electionContract, isCurrentUserHasVoted,
-            startTimeInMs, endTimeInMs
+            startTimeInMs, endTimeInMs, isOpen, timeToStart, timeToEnd
         }}>
             {children}
         </AppContext.Provider>

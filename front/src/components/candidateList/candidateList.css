@@ -4,12 +4,30 @@
     border-bottom: 1px solid #c5c5c525;
 }
 
+.th {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
 .tr {
     width: 100%;
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
+    position: relative;
+}
+
+.tr:hover {
+    cursor: pointer;
+    background-color: #ffffff10;
+}
+
+.tr:hover .tooltip {
+    visibility: visible;
 }
 
 .td {
@@ -25,4 +43,29 @@
 select {
     width: 100%;
     font-size: 1rem;
+}
+
+.tooltip {
+    position: absolute;
+    right: -350px;
+    border: 1px solid #ffffff10;
+    padding: 1vh 1vw;
+    visibility: hidden;
+}
+
+#quiz-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2vh;
+    margin-bottom: 1vh;
+}
+
+.rating-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2vw;
 }

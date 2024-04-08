@@ -15,7 +15,7 @@ const AdminPanel = () => {
     const [newCandidateName, setNewCandidateName] = useState('');
 
     const [startTime, setStartTime] = useState(Date.now());
-    const [endTime, setEndTime] = useState(Date.now() + HOUR_IN_MS);
+    const [endTime, setEndTime] = useState(Date.now() + HOUR_IN_MS * 0.5);
 
     useEffect(() => {
         console.log(startTime)
