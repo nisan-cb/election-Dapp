@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:web": "cd ./front && npm run dev",
-    "deploy:contract": "cd ./truffle && npm run migrate"
+    "deploy:contracts": "cd ./truffle && npm run migrate",
+    "i": "npm i && cd ./front && npm i && cd ../truffle && npm i"
   },
   "author": "",
   "license": "ISC"
