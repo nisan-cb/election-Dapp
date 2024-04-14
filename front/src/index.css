@@ -13,6 +13,13 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-size: 1rem;
+}
+
 a {
   font-weight: 500;
   color: #646cff;
@@ -27,7 +34,7 @@ body {
   margin: 0;
   display: flex;
   place-items: center;
-  min-width: 320px;
+  /* min-width: 320px; */
   min-height: 100vh;
 }
 
@@ -54,6 +61,10 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+input {
+  padding: 1vh 1vw;
 }
 
 @media (prefers-color-scheme: light) {

@@ -27,7 +27,7 @@
 }
 
 .tr:hover .tooltip {
-    visibility: visible;
+    display: block;
 }
 
 .td {
@@ -46,11 +46,12 @@ select {
 }
 
 .tooltip {
-    position: absolute;
-    right: -350px;
+    position: fixed;
+    right: -300px;
     border: 1px solid #ffffff10;
     padding: 1vh 1vw;
-    visibility: hidden;
+    /* visibility: hidden; */
+    display: none;
 }
 
 #quiz-box {
@@ -60,9 +61,12 @@ select {
     align-items: center;
     gap: 2vh;
     margin-bottom: 1vh;
+    width: fit-content;
+    margin: 0 auto;
 }
 
 .rating-row {
+    width: 100%;
     display: flex;
     flex-direction: row;
     justify-content: space-between;

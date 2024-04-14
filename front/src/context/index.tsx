@@ -25,7 +25,8 @@ const initialContext = {
     endTimeInMs: 0,
     isOpen: false,
     timeToStart: 0,
-    timeToEnd: 0
+    timeToEnd: 0,
+    isLoading: false
 }
 
 type AppContextType = typeof initialContext
@@ -44,7 +45,8 @@ const ContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [timeToStart, setTimeToStart] = useState(0);
     const [timeToEnd, setTimeToEnd] = useState(0);
-    const timerIDref = useRef<NodeJS.Timeout | undefined>(undefined)
+    const timerIDref = useRef<NodeJS.Timeout | undefined>(undefined);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         initWeb3Provider();
@@ -85,7 +87,11 @@ const ContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
         if (!electionContract) return
         subscribeEvent(electionContract, 'NewCandidate', () => getCandidates())
         subscribeEvent(electionContract, 'Reset', () => initContract())
-        subscribeEvent(electionContract, 'NewVote', () => getCandidates())
+        subscribeEvent(electionContract, 'NewVote', () => {
+            getCandidates();
+            connectAccountHandler();
+            checkIsCurrentUserHasVoted();
+        })
     }
 
 
@@ -122,6 +128,7 @@ const ContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
     }
 
     const connectAccountHandler = async () => {
+        console.log('connectAccountHandler')
         try {
             if (!window.ethereum)
                 alert("Please install MetaMask")
@@ -153,6 +160,7 @@ const ContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
 
     const getCandidates = async () => {
         if (!electionContract) return;
+        setIsLoading(true)
         const candidatesCount: number = await electionContract?.methods.candidatesCount().call();
         const array: ICandidate[] = [];
         for (let i = 1; i <= candidatesCount; i++) {
@@ -170,6 +178,7 @@ const ContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
 
         }
         setCandidates(array);
+        setIsLoading(false)
     }
 
     const getTime = async () => {
@@ -185,6 +194,7 @@ const ContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
     const checkIsCurrentUserHasVoted = async () => {
         if (!electionContract || !currentAccount) return;
         const res: boolean = await electionContract?.methods.voters(currentAccount).call();
+        console.log({ res })
         setIsCurrentUserHasVoted(res);
     }
 
@@ -192,7 +202,7 @@ const ContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
     return (
         <AppContext.Provider value={{
             isOwner, currentAccount, candidates, connectAccountHandler, electionContract, isCurrentUserHasVoted,
-            startTimeInMs, endTimeInMs, isOpen, timeToStart, timeToEnd
+            startTimeInMs, endTimeInMs, isOpen, timeToStart, timeToEnd, isLoading
         }}>
             {children}
         </AppContext.Provider>

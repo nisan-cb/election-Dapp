@@ -38,9 +38,9 @@ contract Election {
         token = VotingToken(tokenAddress);
         startTime = block.timestamp + 300;
         endTime = block.timestamp + 3600;
-        addCandidate("avi", Ideology(5, 3, 4));
-        addCandidate("dan", Ideology(1, 1, 4));
-        addCandidate("dan", Ideology(1, 5, 1));
+        addCandidate("Avi", Ideology(5, 3, 4));
+        addCandidate("Dan", Ideology(1, 1, 4));
+        addCandidate("Ben", Ideology(1, 5, 1));
     }
     modifier onlyOwner() {
         require(msg.sender == owner);

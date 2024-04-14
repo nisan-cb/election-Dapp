@@ -7,7 +7,7 @@ import Timer from "../timer/timer";
 import Rating from "../rating/rating";
 
 const CandidateList = () => {
-    const { candidates, electionContract, currentAccount, isCurrentUserHasVoted, isOpen } = useContext(AppContext);
+    const { candidates, electionContract, currentAccount, isCurrentUserHasVoted, isOpen, isLoading } = useContext(AppContext);
     const [selectedCandidate, setSelectedCandidate] = useState<number>();
     const [isQuizOpen, setIsQuizOpen] = useState<boolean>(false);
     const [quizState, setQuizState] = useState({ economy: 0, education: 0, security: 0 })
@@ -22,6 +22,8 @@ const CandidateList = () => {
     }, [candidates]);
 
     const displayList = () => {
+        if (candidates.length === 0)
+            return <p>There are no candidates</p>
         return candidates.map(({ name, id, voteCount, ideology }) => <div key={id} className="tr">
             <div className="td">{id}</div>
             <div className="td">{name}</div>
@@ -60,7 +62,7 @@ const CandidateList = () => {
                     <div className="td">name</div>
                     <div className="td">votes</div>
                 </div>
-                {candidates.length === 0 ?
+                {isLoading ?
 
                     < Spinner />
                     :
@@ -103,13 +105,15 @@ const CandidateList = () => {
                                         Security: <Rating value={quizState.security} onChange={(val) => setQuizState(prev => ({ ...prev, security: val }))} />
                                     </div>
                                     <button onClick={voteByIdeologyHandler}>Vote</button>
-
-                                </div>)
+                                </div>
+                            )
                         }
                     </>
 
 
             }
+            <br />
+            <br />
             <Timer />
         </>
     )
